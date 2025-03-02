@@ -26,8 +26,7 @@ def save_members():
 
 
 app = Flask(__name__)
-app.secret_key = "f9619ce438c1defe02d9e281ff5bcdbcc71c8f3e0c115f9b"  # strong secret key
-
+app.secret_key = os.getenv("SECRET_KEY", "fallback_key")  # Use env variable or fallback
 app.config['APPLICATION_ROOT'] = '/flask'
 
 
