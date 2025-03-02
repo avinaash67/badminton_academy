@@ -36,7 +36,11 @@
                 <tbody>
                     {% for member in members %}
                     <tr>
-                        <td><input type="checkbox" name="selected_members" value="{{ loop.index0 }}"></td>
+                        <!-- This is Jinja2 conditional logic inside an HTML file. 
+                        It checks if the current member is in selected_members. 
+                        If true, it adds the checked attribute to the checkbox, meaning the checkbox will remain selected when the page reloads. -->
+                        <td><input type="checkbox" name="selected_members" value="{{ loop.index0 }}"
+                            {% if member in selected_members %} checked {% endif %}></td>
                         <td>{{ member.first_name }}</td>
                         <td>{{ member.last_name }}</td>
                         <td>{{ member.gender }}</td>
@@ -47,6 +51,7 @@
             </table>
             <button type="submit" class="btn btn-success mt-3">Generate Matches</button>
         </form>
+
         {% else %}
         <div class="alert alert-info">No members added yet.</div>
         {% endif %}

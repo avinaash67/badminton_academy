@@ -9,6 +9,8 @@ import os
 
 # Path to the JSON file
 DATA_FILE = "members.json"
+SELECTED_MEMBERS_FILE = "selected_members.json"
+
 
 # Load members from the JSON file
 def load_members():
@@ -64,7 +66,8 @@ def login():
 def dashboard():
     if not session.get("logged_in"):
         return redirect(url_for("login"))
-    return render_template("dashboard.html",members =members)
+    selected_members = load_selected_members()  # Load previously selected members
+    return render_template("dashboard.html",members=members, selected_members=selected_members)
 
 @app.route("/flask/add_member", methods=["GET", "POST"])
 def add_member():
@@ -138,6 +141,7 @@ def generate_matches():
             selected_indexes = [int(index) for index in selected_indexes]  # Convert to integers
             selected_members = [members[idx] for idx in selected_indexes]
             session["selected_members"] = selected_members  # Save the new selection to session
+            save_selected_members(selected_members)  # Save to file 
 
     # If no selected members exist, redirect back to dashboard
     if not selected_members:
@@ -328,6 +332,19 @@ def generate_fair_balanced_matches(selected_members, previous_matches=None):
         waiting_members = sorted_members
 
     return doubles_matches, singles_match, waiting_members, previous_matches
+
+# Load selected members from file
+def load_selected_members():
+    if os.path.exists(SELECTED_MEMBERS_FILE):
+        with open(SELECTED_MEMBERS_FILE, "r") as file:
+            return json.load(file)
+    return []
+
+# Save selected members to file
+def save_selected_members(selected_members):
+    with open(SELECTED_MEMBERS_FILE, "w") as file:
+        json.dump(selected_members, file)
+
 
 
 @app.route("/flask/logout")
